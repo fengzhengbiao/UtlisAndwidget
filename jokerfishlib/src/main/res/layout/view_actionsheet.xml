@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/tv_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/white"
+        android:gravity="center"
+        android:minHeight="50dp"
+        android:textColor="#666666"
+        android:textSize="14sp" />
+
+    <com.credit.vcard.ui.widget.SheetDialogListView
+        android:id="@+id/sdlv_content"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:scrollbars="vertical"
+        android:background="@android:color/white"
+        android:divider="@drawable/dialog_divider"
+        android:dividerHeight="0.5dp" />
+
+    <Button
+        android:id="@+id/btn_cancle"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_marginTop="10dp"
+        android:background="@android:color/white"
+        android:text="CANCLE"
+        android:textColor="#666666"
+        android:textSize="15sp" />
+</LinearLayout>
+
