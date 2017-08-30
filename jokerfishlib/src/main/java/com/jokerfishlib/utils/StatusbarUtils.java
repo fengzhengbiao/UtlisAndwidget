@@ -3,6 +3,7 @@ package com.jokerfishlib.utils;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
+import android.content.res.Resources;
 import android.os.Build;
 import android.view.View;
 import android.view.Window;
@@ -74,5 +75,19 @@ public class StatusbarUtils {
         }
         statusBarHeight = sbar;
         return sbar;
+    }
+    /**
+     * 获取底部导航栏的高度
+     * @param context
+     * @return
+     */
+    public static int getNeivigationBarHeight(Context context) {
+        try {
+            Resources res = context.getResources();
+            int navigationHeight = res.getIdentifier("navigation_bar_height", "dimen", "android");
+            return res.getDimensionPixelSize(navigationHeight);
+        } catch (Exception e) {
+            return 0;
+        }
     }
 }
