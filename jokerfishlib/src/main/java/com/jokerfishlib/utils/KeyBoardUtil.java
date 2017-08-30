@@ -34,7 +34,7 @@ public class KeyBoardUtil {
                 int screenHeight = decorView.getRootView().getHeight();
                 int heightDifferent = screenHeight - rect.bottom - StatusbarUtils.getNeivigationBarHeight(activity);
                 FrameLayout.LayoutParams lp = (FrameLayout.LayoutParams) rootView.getLayoutParams();
-                if (heightDifferent != lastHeightDiff) {
+                if (Math.abs(heightDifferent - lastHeightDiff) > 10) {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
                         lp.setMargins(0, 0, 0, heightDifferent);
                         rootView.requestLayout();
@@ -47,6 +47,7 @@ public class KeyBoardUtil {
 
     /**
      * 隐藏系统键盘
+     *
      * @param mcontext
      */
     public static void closeKeyBoard(Activity mcontext) {
