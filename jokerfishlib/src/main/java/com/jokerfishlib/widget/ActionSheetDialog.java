@@ -21,6 +21,8 @@ import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.jokerfishlib.R;
+
 import java.util.List;
 
 /**
@@ -40,7 +42,7 @@ public class ActionSheetDialog extends Dialog {
     private String mButtonText;
     private int mButtonColor;
     private OnActionClickListener mListener;
-    private List mActionList;
+    private List<? extends IActionItem> mActionList;
     private String mDefaultActionCode;
     private int mTitleRes;
     private int mButtonRes;
@@ -111,7 +113,7 @@ public class ActionSheetDialog extends Dialog {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 if (mListener != null) {
-                    mListener.onActionClicked(ActionSheetDialog.this, (IActionItem) mActionList.get(i), i);
+                    mListener.onActionClicked(ActionSheetDialog.this,  mActionList.get(i), i);
                 } else {
                     dismiss();
                 }
@@ -182,7 +184,7 @@ public class ActionSheetDialog extends Dialog {
             return this;
         }
 
-        public Builder setActionData(List actions) {
+        public Builder setActionData(List<? extends IActionItem> actions) {
             mDialog.mActionList = actions;
             return this;
         }
