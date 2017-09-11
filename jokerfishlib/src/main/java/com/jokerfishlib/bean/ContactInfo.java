@@ -1,5 +1,7 @@
 package com.jokerfishlib.bean;
 
+import java.util.List;
+
 /**
  * Created by JokerFish on 2017/7/13.
  * 联系人数据
@@ -7,12 +9,12 @@ package com.jokerfishlib.bean;
 
 public class ContactInfo {
     private String name;
-    private String phone;
+    private List<String> phones;
     private int timesContacted;
 
-    public ContactInfo(String name, String phone, int timesContacted) {
+    public ContactInfo(String name, List<String> phone, int timesContacted) {
         this.name = name;
-        this.phone = phone;
+        this.phones = phone;
         this.timesContacted = timesContacted;
     }
 
@@ -24,12 +26,12 @@ public class ContactInfo {
         this.name = name;
     }
 
-    public String getPhone() {
-        return phone;
+    public List<String> getPhones() {
+        return phones;
     }
 
-    public void setPhone(String phone) {
-        this.phone = phone;
+    public void setPhones(List<String> phones) {
+        this.phones = phones;
     }
 
     public int getTimesContacted() {

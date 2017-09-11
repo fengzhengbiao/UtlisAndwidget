@@ -1,9 +1,13 @@
 package com.jokerfishlib.utils;
 
 import android.Manifest;
+import android.app.usage.UsageStats;
+import android.app.usage.UsageStatsManager;
 import android.bluetooth.BluetoothAdapter;
 import android.content.ContentResolver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
@@ -12,9 +16,11 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.net.Uri;
 import android.net.wifi.WifiManager;
+import android.os.Build;
 import android.provider.CallLog;
 import android.provider.ContactsContract;
 import android.provider.Settings;
+import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
 import android.telephony.TelephonyManager;
 import android.text.TextUtils;
@@ -23,7 +29,9 @@ import android.util.Log;
 import com.jokerfishlib.bean.ContactInfo;
 import com.jokerfishlib.bean.MessageInfo;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import static android.content.Context.TELEPHONY_SERVICE;
@@ -34,6 +42,8 @@ import static android.content.Context.TELEPHONY_SERVICE;
 
 public class PhoneUtils {
     private static final String TAG = PhoneUtils.class.getSimpleName();
+    private static final SimpleDateFormat DATE_FORMAT_Y_M_D = new SimpleDateFormat("yyyy-MM-dd");
+
     /**
      * 得到手机通讯录联系人信息
      **/
@@ -41,24 +51,45 @@ public class PhoneUtils {
         List<ContactInfo> contacts = new ArrayList<>();
         ContentResolver resolver = sContext.getContentResolver();
         // 获取手机联系人
-        Cursor phoneCursor = resolver.query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null, null, null, null);
-        if (phoneCursor == null) {
+        Cursor contactCursor = resolver.query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null, null, null, null);
+        if (contactCursor == null) {
             return contacts;
         }
-        while (phoneCursor.moveToNext()) {
-            String string = phoneCursor.getString(0);
-            Log.i(TAG, "getPhoneContacts: " + string);
-            String name = phoneCursor.getString(phoneCursor
+        while (contactCursor.moveToNext()) {
+
+            String contactId = contactCursor.getString(contactCursor.getColumnIndex(ContactsContract.Contacts._ID));
+
+            String name = contactCursor.getString(contactCursor
                     .getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME));
             //读取通讯录的号码
-            String number = phoneCursor.getString(phoneCursor
+            String number = contactCursor.getString(contactCursor
                     .getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
-            String timesContacted = phoneCursor.getString(phoneCursor
+            String timesContacted = contactCursor.getString(contactCursor
                     .getColumnIndex(ContactsContract.CommonDataKinds.Phone.TIMES_CONTACTED));
+
+            int phoneCount = contactCursor
+                    .getInt(contactCursor.getColumnIndex(ContactsContract.Contacts.HAS_PHONE_NUMBER));
+            List<String> phones = new ArrayList<>();
+            if (phoneCount > 0) {
+                Cursor phoneCursor = resolver.query(
+                        ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
+                        null,
+                        ContactsContract.CommonDataKinds.Phone.CONTACT_ID
+                                + "=" + contactId, null, null);
+                if (phoneCursor.moveToFirst()) {
+                    do {
+                        //遍历所有的联系人下面所有的电话号码
+                        String phoneNumber = phoneCursor.getString(phoneCursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
+                        phones.add(phoneNumber);
+                    } while (phoneCursor.moveToNext());
+                }
+                phoneCursor.close();
+            }
+
             Log.i(TAG, "姓名" + name + "---电话：" + number + "--联系次数" + timesContacted);
-            contacts.add(new ContactInfo(name, number, Integer.parseInt(timesContacted)));
+            contacts.add(new ContactInfo(name, phones, Integer.parseInt(timesContacted)));
         }
-        phoneCursor.close();
+        contactCursor.close();
         contacts.add(getLocal(sContext));
         return contacts;
     }
@@ -71,13 +102,17 @@ public class PhoneUtils {
      */
     public static ContactInfo getLocal(Context context) {
         ContactInfo info = null;
+        List<String> contact = new ArrayList<>();
         try {
             TelephonyManager tm = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
             String tel = tm.getLine1Number();
-            info = new ContactInfo("local", TextUtils.isEmpty(tel) ? "0000" : tel, 0);
+            String groupIdLevel1 = tm.getGroupIdLevel1();
+            contact.add(TextUtils.isEmpty(tel) ? "0000" : tel);
+            info = new ContactInfo("local", contact, 0);
         } catch (Exception e) {
             e.printStackTrace();
-            info = new ContactInfo("local", "00000000", 0);
+            contact.add("00000000");
+            info = new ContactInfo("local", contact, 0);
         }
         return info;
     }
@@ -182,7 +217,12 @@ public class PhoneUtils {
         return messageInfos;
     }
 
-
+    /**
+     * 获取位置
+     *
+     * @param context
+     * @return
+     */
     public static Location getLocation(Context context) {
         String locationProvider = null;
         LocationManager locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
@@ -303,10 +343,11 @@ public class PhoneUtils {
         }
         return 0;
     }
+
     /**
      * 获取当前手机系统版本号
      *
-     * @return  系统版本号
+     * @return 系统版本号
      */
     public static String getSystemVersion() {
         return android.os.Build.VERSION.RELEASE;
@@ -315,7 +356,7 @@ public class PhoneUtils {
     /**
      * 获取手机型号
      *
-     * @return  手机型号
+     * @return 手机型号
      */
     public static String getSystemModel() {
         return android.os.Build.MODEL;
@@ -324,10 +365,83 @@ public class PhoneUtils {
     /**
      * 获取手机厂商
      *
-     * @return  手机厂商
+     * @return 手机厂商
      */
     public static String getDeviceBrand() {
         return android.os.Build.BRAND;
     }
+
+    /**
+     * 获取所有安装应用的名字
+     *
+     * @param context
+     * @return
+     */
+    public static List<String> getInstalledApp(Context context) {
+        List<String> listItems = new ArrayList<>();
+        // 获取系统内的所有程序信息
+        Intent mainintent = new Intent(Intent.ACTION_MAIN, null);
+        mainintent.addCategory(Intent.CATEGORY_LAUNCHER);
+        List<PackageInfo> packageInfos = context.getPackageManager().getInstalledPackages(0);
+        int count = packageInfos.size();
+        for (int i = 0; i < count; i++) {
+            PackageInfo pinfo = packageInfos.get(i);
+            ApplicationInfo appInfo = pinfo.applicationInfo;
+            //非系统程序
+            if ((appInfo.flags & ApplicationInfo.FLAG_SYSTEM) <= 0) {
+                String lable = pinfo.applicationInfo.loadLabel(context.getPackageManager()).toString();
+                String packageName = pinfo.applicationInfo.packageName;
+//                map.put("app_logo", pinfo.applicationInfo.loadIcon(mContext.getPackageManager()));
+//                map.put("app_name", pinfo.applicationInfo.loadLabel(mContext.getPackageManager()));
+//                map.put("package_name", pinfo.applicationInfo.packageName);
+//                map.put("app_version_name", pinfo.versionName);
+//                map.put("app_version_code", pinfo.versionCode);
+                listItems.add(lable);
+            }
+        }
+        return listItems;
+    }
+
+    /**
+     * @param context
+     */
+    @Deprecated
+    @RequiresApi(Build.VERSION_CODES.LOLLIPOP_MR1)
+    public static void getUsageStatus(Context context) {
+        UsageStatsManager usm = (UsageStatsManager) context.getSystemService(Context.USAGE_STATS_SERVICE);
+        Calendar calendar = Calendar.getInstance();
+        long endTime = calendar.getTimeInMillis();
+        calendar.add(Calendar.YEAR, -2);
+        long startTime = calendar.getTimeInMillis();
+        Log.d(TAG, "Range start:" + DATE_FORMAT_Y_M_D.format(startTime));
+        Log.d(TAG, "Range end:" + DATE_FORMAT_Y_M_D.format(endTime));
+        List<UsageStats> usageStatsList = usm.queryUsageStats(UsageStatsManager.INTERVAL_DAILY, startTime, endTime);
+        for (UsageStats usageStats : usageStatsList) {
+            String packageName = usageStats.getPackageName();
+            long timeInForeground = usageStats.getTotalTimeInForeground();
+            Log.i(TAG, getProgramNameByPackageName(context, packageName) + " : " + timeInForeground);
+        }
+    }
+
+    /**
+     * 根据包名获取应用名
+     *
+     * @param context
+     * @param packageName
+     * @return
+     */
+    public static String getProgramNameByPackageName(Context context, String packageName) {
+        PackageManager pm = context.getPackageManager();
+        String name = null;
+        try {
+            name = pm.getApplicationLabel(pm.getApplicationInfo(packageName, PackageManager.GET_META_DATA)).toString();
+
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+        return name;
+
+    }
+
 
 }

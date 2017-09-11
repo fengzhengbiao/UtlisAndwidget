@@ -22,7 +22,9 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.jokerfishlib.R;
+import com.jokerfishlib.bean.SimAction;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -113,7 +115,7 @@ public class ActionSheetDialog extends Dialog {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 if (mListener != null) {
-                    mListener.onActionClicked(ActionSheetDialog.this,  mActionList.get(i), i);
+                    mListener.onActionClicked(ActionSheetDialog.this, mActionList.get(i), i);
                 } else {
                     dismiss();
                 }
@@ -185,6 +187,15 @@ public class ActionSheetDialog extends Dialog {
         }
 
         public Builder setActionData(List<? extends IActionItem> actions) {
+            mDialog.mActionList = actions;
+            return this;
+        }
+
+        public Builder setActionData(String... desc) {
+            List<SimAction> actions = new ArrayList<>();
+            for (int i = 0; i < desc.length; i++) {
+                actions.add(new SimAction(String.valueOf(i), desc[i]));
+            }
             mDialog.mActionList = actions;
             return this;
         }
