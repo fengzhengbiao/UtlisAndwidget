@@ -2,7 +2,7 @@
 常用的Utils和自定义控件
 
 引用方式:
-compile 'com.leopard:universaltools:1.0.0'
+<font color=#0099ff>compile 'com.leopard:universaltools:1.0.0'</font>
 ## 自定义控件
 ###ActionSheetDIalog
  高仿ios风格从底部弹出的对话框
