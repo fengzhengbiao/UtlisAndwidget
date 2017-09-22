@@ -22,6 +22,8 @@ import android.provider.ContactsContract;
 import android.provider.Settings;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
+import android.telephony.SubscriptionInfo;
+import android.telephony.SubscriptionManager;
 import android.telephony.TelephonyManager;
 import android.text.TextUtils;
 import android.util.Log;
@@ -95,7 +97,7 @@ public class PhoneUtils {
     }
 
     /**
-     * 获取本机手机号码
+     * 获取本机手机号码（兼容双卡手机）
      *
      * @param context
      * @return
@@ -103,16 +105,26 @@ public class PhoneUtils {
     public static ContactInfo getLocal(Context context) {
         ContactInfo info = null;
         List<String> contact = new ArrayList<>();
-        try {
-            TelephonyManager tm = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
-            String tel = tm.getLine1Number();
-            String groupIdLevel1 = tm.getGroupIdLevel1();
-            contact.add(TextUtils.isEmpty(tel) ? "0000" : tel);
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP_MR1) {
+            SubscriptionManager subscriptionManager = SubscriptionManager.from(context.getApplicationContext());
+            List<SubscriptionInfo> subsInfoList = subscriptionManager.getActiveSubscriptionInfoList();
+            for (SubscriptionInfo subscriptionInfo : subsInfoList) {
+                String number = subscriptionInfo.getNumber();
+                Log.d("Test", " Number is  " + number);
+                contact.add(number);
+            }
             info = new ContactInfo("local", contact, 0);
-        } catch (Exception e) {
-            e.printStackTrace();
-            contact.add("00000000");
-            info = new ContactInfo("local", contact, 0);
+        } else {
+            try {
+                TelephonyManager tm = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
+                String tel = tm.getLine1Number();
+                contact.add(TextUtils.isEmpty(tel) ? "0000" : tel);
+                info = new ContactInfo("local", contact, 0);
+            } catch (Exception e) {
+                e.printStackTrace();
+                contact.add("00000000");
+                info = new ContactInfo("local", contact, 0);
+            }
         }
         return info;
     }

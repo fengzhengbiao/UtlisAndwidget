@@ -33,5 +33,7 @@
         android:layout_height="60dp"
         android:text="openWIFI"
         />
-
+        <com.jokerfishlib.widget.WaveView
+            android:layout_width="match_parent"
+            android:layout_height="200dp" />
 </LinearLayout>
