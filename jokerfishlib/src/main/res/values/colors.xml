@@ -1,4 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="colorPrimary">#765bee</color>
+    <color name="lightBlack">#666666</color>
+    <color name="darkGray">#7F000000</color>
+    <color name="lightGray">#55000000</color>
+    <color name="colorLine">#e6e6e6</color>
+
+    <color name="colorLoadingDialog">#25000000</color>
+
+    <!--等待黑色组合-->
+    <color name="loadingDark_1">#FFFF</color>
+    <color name="loadingDark_2">#EFFF</color>
+    <color name="loadingDark_3">#DFFF</color>
+    <color name="loadingDark_4">#CFFF</color>
+    <color name="loadingDark_5">#BFFF</color>
+    <color name="loadingDark_6">#AFFF</color>
+    <color name="loadingDark_7">#9FFF</color>
+    <color name="loadingDark_8">#8FFF</color>
 </resources>

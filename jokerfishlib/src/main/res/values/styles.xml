@@ -20,10 +20,19 @@
         <item name="android:windowAnimationStyle">@style/ActionSheetDialogAnimation</item>
     </style>
 
-    <!-- ActionSheet进出动画 -->
-    <style name="ActionSheetDialogAnimation" parent="@android:style/Animation.Dialog">
-        <item name="android:windowEnterAnimation">@anim/dialog_enter</item>
-        <item name="android:windowExitAnimation">@anim/dialog_exit</item>
-
+    <style name="ScaleCenterDialog" parent="FromButtonDialogStyle">
+        <item name="android:windowAnimationStyle">@style/ScaleAnimation</item>
     </style>
+
+    <!-- 底部进出动画 -->
+    <style name="ActionSheetDialogAnimation" parent="@android:style/Animation.Dialog">
+        <item name="android:windowEnterAnimation">@anim/from_buttom_enter</item>
+        <item name="android:windowExitAnimation">@anim/to_buttom_exit</item>
+    </style>
+    <!--透明度动画-->
+    <style name="ScaleAnimation" parent="@android:style/Animation.Dialog">
+        <item name="android:windowEnterAnimation">@anim/center_scale_enter</item>
+        <item name="android:windowExitAnimation">@anim/center_scale_eixt</item>
+    </style>
+
 </resources>

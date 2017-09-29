@@ -1,5 +1,6 @@
 package com.utilib.jokerfish.utilandwidget;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -15,6 +16,8 @@ import com.jokerfishlib.utils.PhoneUtils;
 import com.jokerfishlib.utils.WifiListener;
 import com.jokerfishlib.utils.WifiUtils;
 import com.jokerfishlib.widget.ActionSheetDialog;
+import com.jokerfishlib.widget.HintDialog;
+import com.jokerfishlib.widget.LoadingDialog;
 import com.utilib.jokerfish.utilandwidget.bean.TestData;
 
 import java.util.ArrayList;
@@ -32,6 +35,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         setContentView(R.layout.activity_main);
         btnSheetDiaglog = (Button) findViewById(R.id.btn_sheetdialog);
         findViewById(R.id.btn_all_app).setOnClickListener(this);
+        findViewById(R.id.bt_hint_dialog).setOnClickListener(this);
+        findViewById(R.id.bt_loading).setOnClickListener(this);
         btnSheetDiaglog.setOnClickListener(this);
         wifiUtils = new WifiUtils(this);
         datas = new ArrayList<>();
@@ -65,11 +70,36 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.bt_open:
                 wifiUtils.OpenWifi();
                 break;
+            case R.id.bt_hint_dialog:
+                new HintDialog.Builder(this)
+                        .title("警告")
+                        .leftButtonName("忽略")
+                        .rightButtonName("明白")
+                        .leftButtonListener(new HintDialog.OnLeftClickListener() {
+                            @Override
+                            public void onLeftClicked(DialogInterface dialog) {
+                                dialog.dismiss();
+                            }
+                        })
+                        .rightButtonListener(new HintDialog.OnRightClickListener() {
+                            @Override
+                            public void onRightClicked(DialogInterface dialog) {
+                                dialog.dismiss();
+                            }
+                        })
+                        .message("这是一个警告！")
+                        .build()
+                        .show();
+
+
+                break;
+            case R.id.bt_loading:
+                LoadingDialog.show(this, "登录...");
+                break;
         }
     }
 
     private void regist() {
-
         wifiUtils.register(new WifiListener() {
 
             @Override

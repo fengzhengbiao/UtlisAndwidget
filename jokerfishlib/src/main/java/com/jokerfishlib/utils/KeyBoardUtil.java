@@ -64,7 +64,7 @@ public class KeyBoardUtil {
      *
      * @param editText
      */
-    public static void showKeybord(EditText editText) {
+    public static void showKeyboard(EditText editText) {
         editText.setFocusable(true);
         editText.setFocusableInTouchMode(true);
         editText.requestFocus();
