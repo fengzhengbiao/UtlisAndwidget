@@ -24,6 +24,7 @@ allprojects {
             links "http://docs.oracle.com/javase/7/docs/api"
         }
     }
+
 }
 
 task clean(type: Delete) {

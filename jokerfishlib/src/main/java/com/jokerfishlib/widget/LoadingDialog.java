@@ -22,6 +22,7 @@ public class LoadingDialog extends Dialog {
 
     private TextView tvDesc;
     private static LoadingDialog dialog;
+    private static ObjectAnimator objectAnimator;
 
     private static LoadingDialog getInstance(Context context) {
         if (dialog == null) {
@@ -50,7 +51,7 @@ public class LoadingDialog extends Dialog {
         setCanceledOnTouchOutside(false);
         View viewById = findViewById(R.id.iv_loading);
         tvDesc = (TextView) findViewById(R.id.tv_desc);
-        ObjectAnimator objectAnimator = ObjectAnimator.ofFloat(viewById, "rotation", 0, 360);
+        objectAnimator = ObjectAnimator.ofFloat(viewById, "rotation", 0, 360);
         objectAnimator.setDuration(1000);
         objectAnimator.setRepeatCount(ValueAnimator.INFINITE);
         objectAnimator.setRepeatMode(ValueAnimator.RESTART);
@@ -71,6 +72,9 @@ public class LoadingDialog extends Dialog {
 
     public static void dissmiss() {
         if (LoadingDialog.dialog != null) {
+            if (LoadingDialog.objectAnimator != null) {
+                objectAnimator.end();
+            }
             if (LoadingDialog.dialog.isShowing()) {
                 LoadingDialog.dialog.dismiss();
             }

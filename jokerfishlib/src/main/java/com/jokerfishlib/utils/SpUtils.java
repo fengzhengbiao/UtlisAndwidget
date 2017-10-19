@@ -14,7 +14,7 @@ public class SpUtils {
 
     public static synchronized void init(Context context) {
         if (sharedPreferences == null) {
-            sharedPreferences = context.getSharedPreferences("vcard_config", Context.MODE_PRIVATE);
+            sharedPreferences = context.getApplicationContext().getSharedPreferences("config", Context.MODE_PRIVATE);
         }
         Log.i(TAG, "SpUtils has been initialized ");
     }

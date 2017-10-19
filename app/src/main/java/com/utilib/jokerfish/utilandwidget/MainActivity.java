@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
+import com.jokerfishlib.utils.DeskIconBadge.DesckShortCut;
 import com.jokerfishlib.utils.PhoneUtils;
 import com.jokerfishlib.utils.WifiListener;
 import com.jokerfishlib.utils.WifiUtils;
@@ -43,7 +44,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         for (int i = 0; i < 10; i++) {
             datas.add(new TestData(i + "", "测试条目" + i));
         }
-        regist();
+        DesckShortCut.getInstance().showShortCut(this, 0);
+//        regist();
     }
 
     @Override
