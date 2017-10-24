@@ -2,10 +2,11 @@ package com.jokerfishlib.utils;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.util.Log;
 
 /**
- * 吐司工具类
+ * 工具类
  */
 
 public class SpUtils {
@@ -13,6 +14,13 @@ public class SpUtils {
     private static SharedPreferences sharedPreferences;
 
     public static synchronized void init(Context context) {
+        if (sharedPreferences == null) {
+            sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context.getApplicationContext());
+        }
+        Log.i(TAG, "SpUtils has been initialized ");
+    }
+
+    public static synchronized void init(Context context, String name) {
         if (sharedPreferences == null) {
             sharedPreferences = context.getApplicationContext().getSharedPreferences("config", Context.MODE_PRIVATE);
         }
