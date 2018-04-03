@@ -22,54 +22,48 @@ import android.provider.MediaStore;
 public class UriUtils {
     @TargetApi(19)
     public static String getFilePathFromUri(Context context, Uri uri) {
-        String photoPath = "";
-        if(context == null || uri == null) {
-            return photoPath;
+        String path = "";
+        if (context == null || uri == null) {
+            return path;
         }
 
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT && DocumentsContract.isDocumentUri(context, uri)) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT && DocumentsContract.isDocumentUri(context, uri)) {
             String docId = DocumentsContract.getDocumentId(uri);
-            if(isExternalStorageDocument(uri)) {
+            if (isExternalStorageDocument(uri)) {
                 String[] split = docId.split(":");
-                if(split.length >= 2) {
+                if (split.length >= 2) {
                     String type = split[0];
-                    if("primary".equalsIgnoreCase(type)) {
-                        photoPath = Environment.getExternalStorageDirectory() + "/" + split[1];
+                    if ("primary".equalsIgnoreCase(type)) {
+                        path = Environment.getExternalStorageDirectory() + "/" + split[1];
                     }
                 }
-            }
-            else if(isDownloadsDocument(uri)) {
+            } else if (isDownloadsDocument(uri)) {
                 Uri contentUri = ContentUris.withAppendedId(Uri.parse("content://downloads/public_downloads"), Long.valueOf(docId));
-                photoPath = getDataColumn(context, contentUri, null, null);
-            }
-            else if(isMediaDocument(uri)) {
+                path = getDataColumn(context, contentUri, null, null);
+            } else if (isMediaDocument(uri)) {
                 String[] split = docId.split(":");
-                if(split.length >= 2) {
+                if (split.length >= 2) {
                     String type = split[0];
                     Uri contentUris = null;
-                    if("image".equals(type)) {
+                    if ("image".equals(type)) {
                         contentUris = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
-                    }
-                    else if("video".equals(type)) {
+                    } else if ("video".equals(type)) {
                         contentUris = MediaStore.Video.Media.EXTERNAL_CONTENT_URI;
-                    }
-                    else if("audio".equals(type)) {
+                    } else if ("audio".equals(type)) {
                         contentUris = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
                     }
                     String selection = MediaStore.Images.Media._ID + "=?";
-                    String[] selectionArgs = new String[] { split[1] };
-                    photoPath = getDataColumn(context, contentUris, selection, selectionArgs);
+                    String[] selectionArgs = new String[]{split[1]};
+                    path = getDataColumn(context, contentUris, selection, selectionArgs);
                 }
             }
-        }
-        else if("file".equalsIgnoreCase(uri.getScheme())) {
-            photoPath = uri.getPath();
-        }
-        else {
-            photoPath = getDataColumn(context, uri, null, null);
+        } else if ("file".equalsIgnoreCase(uri.getScheme())) {
+            path = uri.getPath();
+        } else {
+            path = getDataColumn(context, uri, null, null);
         }
 
-        return photoPath;
+        return path;
     }
 
     private static boolean isExternalStorageDocument(Uri uri) {
@@ -87,7 +81,7 @@ public class UriUtils {
     private static String getDataColumn(Context context, Uri uri, String selection, String[] selectionArgs) {
         Cursor cursor = null;
         String column = MediaStore.Images.Media.DATA;
-        String[] projection = { column };
+        String[] projection = {column};
         try {
             cursor = context.getContentResolver().query(uri, projection, selection, selectionArgs, null);
             if (cursor != null && cursor.moveToFirst()) {

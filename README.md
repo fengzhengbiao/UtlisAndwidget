@@ -9,6 +9,10 @@
  条目的javabean类需实现IActionItem接口
 ### SmoothCheckBox
  一个Material风格的checkbox,带有动画效果
+### FlexableDialog
+  可变的对话框，能自己设置布局和效果
+ ### HintDialog
+    仿ios圆角对话框
 ##常用工具类
  1. KeyBoardUtil  键盘工具类
  2. PhoneUtil  手机操作相关的工具类
@@ -19,4 +23,5 @@
  7. ThreadUtil 线程工具类
  9. ToastUtil 吐司工具类
  10. WifiUtil wifi工具类
+ 11. UriUtil  能根据uri获取文件路径
 
