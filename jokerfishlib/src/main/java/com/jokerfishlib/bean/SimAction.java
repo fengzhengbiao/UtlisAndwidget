@@ -33,11 +33,11 @@ public class SimAction implements IActionItem {
 
     @Override
     public String getDescription() {
-        return null;
+        return desc;
     }
 
     @Override
     public String actionSheetId() {
-        return null;
+        return code;
     }
 }

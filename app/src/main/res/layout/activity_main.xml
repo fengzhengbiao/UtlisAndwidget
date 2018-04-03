@@ -44,4 +44,10 @@
         android:layout_width="120dp"
         android:layout_height="60dp"
         android:text="等待对话框" />
+
+    <Button
+        android:id="@+id/bt_flexiable"
+        android:layout_width="120dp"
+        android:layout_height="60dp"
+        android:text="可变对话框" />
 </LinearLayout>

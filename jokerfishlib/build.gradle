@@ -20,6 +20,9 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    lintOptions{
+        abortOnError = false
+    }
 }
 tasks.withType(Javadoc) {
     options.addStringOption('Xdoclint:none', '-quiet')
@@ -39,7 +42,7 @@ publish {
     userOrg = 'leopard'//bintray.com用户名
     groupId = 'com.leopard'//jcenter上的路径
     artifactId = 'universaltools'//项目名称
-    publishVersion = '1.1.0'//版本号
+    publishVersion = '1.1.1'//版本号
     desc = 'A library containing common utils and custom widget'//描述，不重要
     website = 'https://github.com/fengzhengbiao/UtlisAndwidget'//网站，不重要；
 }

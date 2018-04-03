@@ -9,14 +9,16 @@ import android.os.Bundle;
 import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 
-import com.jokerfishlib.utils.DeskIconBadge.DesckShortCut;
 import com.jokerfishlib.utils.PhoneUtils;
 import com.jokerfishlib.utils.WifiListener;
 import com.jokerfishlib.utils.WifiUtils;
 import com.jokerfishlib.widget.ActionSheetDialog;
+import com.jokerfishlib.widget.FlexibleDialog;
 import com.jokerfishlib.widget.HintDialog;
 import com.jokerfishlib.widget.LoadingDialog;
 import com.utilib.jokerfish.utilandwidget.bean.TestData;
@@ -38,14 +40,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         findViewById(R.id.btn_all_app).setOnClickListener(this);
         findViewById(R.id.bt_hint_dialog).setOnClickListener(this);
         findViewById(R.id.bt_loading).setOnClickListener(this);
+        findViewById(R.id.bt_flexiable).setOnClickListener(this);
         btnSheetDiaglog.setOnClickListener(this);
         wifiUtils = new WifiUtils(this);
         datas = new ArrayList<>();
         for (int i = 0; i < 10; i++) {
             datas.add(new TestData(i + "", "测试条目" + i));
         }
-        DesckShortCut.getInstance().showShortCut(this, 0);
-//        regist();
     }
 
     @Override
@@ -71,6 +72,27 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case R.id.bt_open:
                 wifiUtils.OpenWifi();
+                break;
+            case R.id.bt_flexiable:
+                new FlexibleDialog.Builder(this)
+                        .layoutRes(R.layout.flexiable_dialog)
+                        .title(R.id.tv_title, "可变对话框")
+                        .imageIds(R.id.iv_image)
+                        .onImageLoadListener(new FlexibleDialog.OnImageLoadListener() {
+                            @Override
+                            public void load(ImageView view, int viewId, int position) {
+                                view.setImageResource(R.mipmap.ic_launcher);
+                            }
+                        }).onClickListener(new FlexibleDialog.OnClickListener() {
+                    @Override
+                    public void onClick(View view, DialogInterface dialogInterface) {
+                        dialogInterface.dismiss();
+                    }
+                }, R.id.button)
+                        .showAt(Gravity.CENTER)
+                        .build()
+                        .show();
+
                 break;
             case R.id.bt_hint_dialog:
                 new HintDialog.Builder(this)

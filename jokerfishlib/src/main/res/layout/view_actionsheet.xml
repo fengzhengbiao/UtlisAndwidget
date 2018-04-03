@@ -14,7 +14,7 @@
         android:textColor="#666666"
         android:textSize="14sp" />
 
-    <com.credit.vcard.ui.widget.SheetDialogListView
+    <com.jokerfishlib.widget.SheetDialogListView
         android:id="@+id/sdlv_content"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

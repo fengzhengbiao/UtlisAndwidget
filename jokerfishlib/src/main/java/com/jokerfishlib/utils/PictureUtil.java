@@ -2,7 +2,9 @@ package com.jokerfishlib.utils;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
 import android.graphics.Matrix;
+import android.graphics.Paint;
 import android.media.ExifInterface;
 import android.util.Log;
 
@@ -15,7 +17,8 @@ import java.io.IOException;
  */
 
 public class PictureUtil {
-    private static final String TAG =PictureUtil.class.getSimpleName();
+    private static final String TAG = PictureUtil.class.getSimpleName();
+
     public static String compressImage(String filePath, String targetPath, int quality) {
         Bitmap bm = getSmallBitmap(filePath);//获取一定尺寸的图片
         int degree = readPictureDegree(filePath);//获取相片拍摄角度
@@ -41,7 +44,7 @@ public class PictureUtil {
         BitmapFactory.Options options = new BitmapFactory.Options();
         options.inJustDecodeBounds = true;
         Bitmap bmp = BitmapFactory.decodeFile(filePath, options);
-        Log.i(TAG,"图片的宽:" + options.outWidth + "  高:" + options.outHeight);
+        Log.i(TAG, "图片的宽:" + options.outWidth + "  高:" + options.outHeight);
         return options.outWidth < options.outHeight;
     }
 
@@ -106,6 +109,34 @@ public class PictureUtil {
             return bitmap;
         }
         return bitmap;
+    }
+
+    public static Bitmap adjustPhotoRotation(Bitmap bm, final int orientationDegree) {
+        Matrix m = new Matrix();
+        m.setRotate(orientationDegree, (float) bm.getWidth() / 2, (float) bm.getHeight() / 2);
+        float targetX, targetY;
+        if (orientationDegree == 90) {
+            targetX = bm.getHeight();
+            targetY = 0;
+        } else {
+            targetX = bm.getHeight();
+            targetY = bm.getWidth();
+        }
+        final float[] values = new float[9];
+        m.getValues(values);
+
+        float x1 = values[Matrix.MTRANS_X];
+        float y1 = values[Matrix.MTRANS_Y];
+        m.postTranslate(targetX - x1, targetY - y1);
+
+        Bitmap bm1 = Bitmap.createBitmap(bm.getHeight(), bm.getWidth(), Bitmap.Config.ARGB_8888);
+
+        Paint paint = new Paint();
+        Canvas canvas = new Canvas(bm1);
+        canvas.drawBitmap(bm, m, paint);
+
+
+        return bm1;
     }
 
     public static int calculateInSampleSize(BitmapFactory.Options options,
